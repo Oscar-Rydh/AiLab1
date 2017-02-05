@@ -32,7 +32,8 @@ def placementLegal(x, y):
         return True
     elif (shouldISwitch('NW', x-1, y-1, False, True)):
         return True
-    return False
+    else:
+        return False
 
 
 def switchCheckers(x, y):
@@ -45,7 +46,7 @@ def switchCheckers(x, y):
     shouldISwitch('W', x-1, y, True, True)
     shouldISwitch('NW', x-1, y-1, True, True)
 
-def shouldISwitch(direction, x, y, switch, firstIteration):
+def shouldISwitch(direction, x, y, switch, firstIteration = True):
     if (x > 7 or x < 0 or y > 7 or y < 0):
         return False
     global gameState
@@ -87,11 +88,15 @@ def shouldISwitch(direction, x, y, switch, firstIteration):
             dx = -1
             dy = -1
         #ask the next cell
-        ans = shouldISwitch(direction, x+dx, y+dy, True, False)
+        ans = shouldISwitch(direction, x+dx, y+dy, switch, False)
         if(ans):
             # Change the disc
             if(switch):
+                print ('Switching')
                 gameState[x][y] = currentPlayer
+                print (direction)
+                print (str(x) + ' ' + str(y))
+                print (gameState[x][y])
         return ans
 
     elif (gameState[x][y] == currentPlayer and not firstIteration):
@@ -101,7 +106,7 @@ def shouldISwitch(direction, x, y, switch, firstIteration):
 
 
 def validPlay(x, y):
-    return (gameState[x][y] is not 2 or gameState[x][y] is not 1) and placementLegal(x, y)
+    return (gameState[x][y] is not 2 and gameState[x][y] is not 1) and placementLegal(x, y)
 
 #Found on stackoverflow
 def printGameState():
@@ -125,7 +130,7 @@ def printGameState():
         #        printMatrix[col+1][row+1] = stateCopy[col][row]
 
 
-    s = [[str(e) for e in row] for row in gameState]
+    s = [[str(e) for e in row] for row in printMatrix]
     lens = [max(map(len, col)) for col in zip(*s)]
     fmt = '  '.join('{{:{}}}'.format(x) for x in lens)
     table = [fmt.format(*row) for row in s]
