@@ -7,13 +7,31 @@ class GameState:
     playerOneTurn = True
 
 
-    def __init__(self, rows = 8, cols = 8):
+    def __init__(self, gameState = None, playerOneTurn = None, rows = 8, cols = 8):
         self.rows = rows
         self.cols = cols
+        if(gameState is not None):
+            self.gameState = gameState
+        if(playerOneTurn is not None):
+            self.playerOneTurn = playerOneTurn
+
+    def __deepcopy__(self, memo):
+        newState = [[] for j in range(self.cols)]
+        newState[0] = copy.deepcopy(self.gameState[0]);
+        newState[1] = copy.deepcopy(self.gameState[1]);
+        newState[2] = copy.deepcopy(self.gameState[2]);
+        newState[3] = copy.deepcopy(self.gameState[3]);
+        newState[4] = copy.deepcopy(self.gameState[4]);
+        newState[5] = copy.deepcopy(self.gameState[5]);
+        newState[6] = copy.deepcopy(self.gameState[6]);
+        newState[7] = copy.deepcopy(self.gameState[7]);
+        newPlayerTurn = copy.deepcopy(self.playerOneTurn)
+        return GameState(newState, newPlayerTurn);
+
 
     def initialize(self):
-        self.gameState[3][4] = 2
-        self.gameState[4][3] = 2
+        self.gameState[3][4] = -1
+        self.gameState[4][3] = -1
         self.gameState[3][3] = 1
         self.gameState[4][4] = 1
 
@@ -26,7 +44,7 @@ class GameState:
             if(self.playerOneTurn):
                 self.gameState[x][y] = 1
             else:
-                self.gameState[x][y] = 2
+                self.gameState[x][y] = -1
             self.switchCheckers(x, y)
             self.playerOneTurn =  not self.playerOneTurn
         else:
@@ -71,11 +89,11 @@ class GameState:
         otherPlayer = 20
         currentPlayer = 20
         if (self.playerOneTurn):
-            otherPlayer = 2
+            otherPlayer = -1
             currentPlayer = 1
         else:
             otherPlayer = 1
-            currentPlayer = 2
+            currentPlayer = -1
         if (self.gameState[x][y] == otherPlayer):
             #Fetch direction
             dx = 0
@@ -123,7 +141,7 @@ class GameState:
 
 
     def validPlay(self, x, y):
-        return (self.gameState[x][y] is not 2 and self.gameState[x][y] is not 1) and self.placementLegal(x, y)
+        return (self.gameState[x][y] is not -1 and self.gameState[x][y] is not 1) and self.placementLegal(x, y)
 
     #Found on stackoverflow
     def printGameState(self):
@@ -136,11 +154,13 @@ class GameState:
             for row in range(8):
                 if(self.validPlay(col, row)):
                     printMatrix[col+1][row+1] = '+'
-                elif(self.gameState[col][row] is 1 or self.gameState[col][row] is  2):
-                    printMatrix[col+1][row+1] = self.gameState[col][row]
+                elif(self.gameState[col][row] is 1 ):
+                    printMatrix[col+1][row+1] = 'W'
+                elif(self.gameState[col][row] is  -1):
+                    printMatrix[col+1][row+1] = 'B'
 
 
-            #    if (placementLegal(col,row)):
+                    #    if (placementLegal(col,row)):
             #        stateCopy[col][row] = '+'
             #    if (stateCopy[col][row] is not 0):
             #        printMatrix[col+1][row+1] = stateCopy[col][row]
@@ -176,9 +196,9 @@ def main():
         coordinates = [1]
         while(len(coordinates) != 2):
             if (game.getPlayerOneTurn()):
-                print ('Player 1')
+                print ('Player W')
             else:
-                print ('Player 2')
+                print ('Player B')
             coordinates = input('Give me your coordinates: \n').split(' ')
 
         x = int(coordinates[0]) - 1
@@ -187,10 +207,11 @@ def main():
         game.printGameState()
         if(game.checkWin()):
             if(game.getPlayerOneTurn()):
-                print ('Winner is: Player 2')
+                print ('Winner is: Player B')
 
             else:
-                print ('Winner is: Player 1')
+                print ('Winner is: Player W')
             break
 
 main()
+
