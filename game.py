@@ -137,6 +137,19 @@ def printGameState():
     print ('\n'.join(table))
 
 
+def checkWin():
+    winner = set()
+    for col in range(8):
+        for row in range(8):
+            if(gameState[col][row] is not 0):
+                winner.add(gameState[col][row])
+
+            if(len(winner) > 1):
+                return False
+
+    return True
+
+
 def main():
     while (True):
         print ('')
@@ -152,6 +165,13 @@ def main():
         y = int(coordinates[1]) - 1
         placeDisk(x, y)
         printGameState()
+        if(checkWin()):
+            if(playerOneTurn):
+                print ('Winner is: Player 2')
+
+            else:
+                print ('Winner is: Player 1')
+            break
 
 gameState[3][3] = 1
 gameState[4][4] = 1
