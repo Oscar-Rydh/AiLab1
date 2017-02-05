@@ -3,6 +3,15 @@ from move import Move
 from minimax import AI
 import copy
 
+print ("")
+print('Welcome to Reversi Human!')
+print('It is you, against me.')
+print('For how long would you like me to think?')
+print('1: Not very long')
+print('2: Average long')
+print('3: Chuck norris long')
+depth = input('Well? ')
+depth = int(depth)*2
 
 game = GameState()
 game.initialize()
@@ -12,20 +21,19 @@ while (True):
         print ("")
         if (game.getPlayerOneTurn()):
             game.printGameState()
-            coordinates = input('Give me your coordinates: \n').split(' ')
-            print ('Player W')
+            coordinates = input('Where do you want to place your brick? (row, col): \n').split(' ')
             x = int(coordinates[0]) - 1
             y = int(coordinates[1]) - 1
             game.placeDisk(Move(x, y))
         else:
-            #print ('Player B')
+            print("I am using my superbrain now...")
             ai = AI()
             aiGame = copy.deepcopy(game)
             aiGame.suppresPrint()
-            action = ai.minimax(aiGame, 5)
+            action = ai.minimax(aiGame, depth)
             game.placeDisk(action['move'])
 
-            print ('Comupter placed in: ' + str(action['move'].getX() + 1) + ' ' + str(action['move'].getY() + 1))
+            print ('I placed in: ' + str(action['move'].getX() + 1) + ' ' + str(action['move'].getY() + 1))
 
 
 
