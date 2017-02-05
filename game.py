@@ -1,39 +1,35 @@
-import numpy
 import copy
 
 class GameState:
 
-    gameState = [[0 for i in range(8)] for j in range(8)]
-    playerOneTurn = True
-
-
-    def __init__(self, gameState = None, playerOneTurn = None, rows = 8, cols = 8):
-        self.rows = rows
-        self.cols = cols
+    def __init__(self, gameState = None, playerOneTurn = None, width = 8):
+        if width%2 is not 0:
+            width = width+1
+        self.width = width
+        self.gameState = [[0 for i in range(width)] for j in range(width)]
+        self.playerOneTurn = True
         if(gameState is not None):
             self.gameState = gameState
         if(playerOneTurn is not None):
             self.playerOneTurn = playerOneTurn
 
     def __deepcopy__(self, memo):
-        newState = [[] for j in range(self.cols)]
-        newState[0] = copy.deepcopy(self.gameState[0]);
-        newState[1] = copy.deepcopy(self.gameState[1]);
-        newState[2] = copy.deepcopy(self.gameState[2]);
-        newState[3] = copy.deepcopy(self.gameState[3]);
-        newState[4] = copy.deepcopy(self.gameState[4]);
-        newState[5] = copy.deepcopy(self.gameState[5]);
-        newState[6] = copy.deepcopy(self.gameState[6]);
-        newState[7] = copy.deepcopy(self.gameState[7]);
+        newState = [[] for j in range(self.width)]
+        for i in range(self.width):
+            newState[i] = copy.deepcopy(self.gameState[i]);
+
+
         newPlayerTurn = copy.deepcopy(self.playerOneTurn)
         return GameState(newState, newPlayerTurn);
 
 
     def initialize(self):
-        self.gameState[3][4] = -1
-        self.gameState[4][3] = -1
-        self.gameState[3][3] = 1
-        self.gameState[4][4] = 1
+        middleSmall = int((self.width/2)-1)
+        middleLarge = int(self.width/2)
+        self.gameState[middleSmall][middleLarge] = -1
+        self.gameState[middleLarge][middleSmall] = -1
+        self.gameState[middleSmall][middleSmall] = 1
+        self.gameState[middleLarge][middleLarge] = 1
 
     def getPlayerOneTurn(self):
         return self.playerOneTurn
@@ -148,10 +144,10 @@ class GameState:
         printMatrix = [['·' for i in range(9)] for j in range(9)]
 
         printMatrix[0][0] = 0
-        for col in range(8):
+        for col in range(self.width):
             printMatrix[col+1][0] = col+1
             printMatrix[0][col+1] = col+1
-            for row in range(8):
+            for row in range(self.width):
                 if(self.validPlay(col, row)):
                     printMatrix[col+1][row+1] = '+'
                 elif(self.gameState[col][row] is 1 ):
@@ -175,8 +171,8 @@ class GameState:
 
     def checkWin(self):
         winner = set()
-        for col in range(8):
-            for row in range(8):
+        for col in range(self.width):
+            for row in range(self.width):
                 if(self.gameState[col][row] is not 0):
                     winner.add(self.gameState[col][row])
 
@@ -184,34 +180,3 @@ class GameState:
                     return False
 
         return True
-
-
-
-def main():
-    game = GameState()
-    game.initialize()
-    game.printGameState()
-    while (True):
-        print ('')
-        coordinates = [1]
-        while(len(coordinates) != 2):
-            if (game.getPlayerOneTurn()):
-                print ('Player W')
-            else:
-                print ('Player B')
-            coordinates = input('Give me your coordinates: \n').split(' ')
-
-        x = int(coordinates[0]) - 1
-        y = int(coordinates[1]) - 1
-        game.placeDisk(x, y)
-        game.printGameState()
-        if(game.checkWin()):
-            if(game.getPlayerOneTurn()):
-                print ('Winner is: Player B')
-
-            else:
-                print ('Winner is: Player W')
-            break
-
-main()
-
