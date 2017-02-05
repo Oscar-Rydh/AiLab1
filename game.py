@@ -1,4 +1,5 @@
 import copy
+from move import Move
 
 class GameState:
 
@@ -8,6 +9,7 @@ class GameState:
         self.width = width
         self.gameState = [[0 for i in range(width)] for j in range(width)]
         self.playerOneTurn = True
+        self.printEnabled = True
         if(gameState is not None):
             self.gameState = gameState
         if(playerOneTurn is not None):
@@ -22,6 +24,9 @@ class GameState:
         newPlayerTurn = copy.deepcopy(self.playerOneTurn)
         return GameState(newState, newPlayerTurn);
 
+    def suppresPrint(self):
+        self.printEnabled = False
+
 
     def initialize(self):
         middleSmall = int((self.width/2)-1)
@@ -34,8 +39,9 @@ class GameState:
     def getPlayerOneTurn(self):
         return self.playerOneTurn
 
-    def placeDisk(self, x,y):
-        # global playerOneTurn
+    def placeDisk(self, move):
+        x = move.getX()
+        y = move.getY()
         if(self.validPlay(x, y)):
             if(self.playerOneTurn):
                 self.gameState[x][y] = 1
@@ -43,8 +49,9 @@ class GameState:
                 self.gameState[x][y] = -1
             self.switchCheckers(x, y)
             self.playerOneTurn =  not self.playerOneTurn
-        else:
-            print ('Could not place disk')
+        #else:
+            #if(self.printEnabled):
+            #print ('Could not place disk')
 
     def placementLegal(self, x, y):
         if (self.shouldISwitch('N', x, y-1, False, True)):
@@ -123,11 +130,7 @@ class GameState:
             if(ans):
                 # Change the disc
                 if(switch):
-                    print ('Switching')
                     self.gameState[x][y] = currentPlayer
-                    print (direction)
-                    print (str(x) + ' ' + str(y))
-                    print (self.gameState[x][y])
             return ans
 
         elif (self.gameState[x][y] == currentPlayer and not firstIteration):
@@ -139,29 +142,32 @@ class GameState:
     def validPlay(self, x, y):
         return (self.gameState[x][y] is not -1 and self.gameState[x][y] is not 1) and self.placementLegal(x, y)
 
-    #Found on stackoverflow
+    def validMoves(self):
+        validMoves = []
+        for x in range(self.width):
+            for y in range(self.width):
+                if(self.validPlay(x ,y)):
+                    move = Move(x, y)
+                    validMoves.append(move)
+        return validMoves
+
+
     def printGameState(self):
         printMatrix = [['·' for i in range(9)] for j in range(9)]
 
         printMatrix[0][0] = 0
-        for col in range(self.width):
-            printMatrix[col+1][0] = col+1
-            printMatrix[0][col+1] = col+1
-            for row in range(self.width):
-                if(self.validPlay(col, row)):
-                    printMatrix[col+1][row+1] = '+'
-                elif(self.gameState[col][row] is 1 ):
-                    printMatrix[col+1][row+1] = 'W'
-                elif(self.gameState[col][row] is  -1):
-                    printMatrix[col+1][row+1] = 'B'
+        for x in range(self.width):
+            printMatrix[x+1][0] = x+1
+            printMatrix[0][x+1] = x+1
+            for y in range(self.width):
+                if(self.validPlay(x, y)):
+                    printMatrix[x+1][y+1] = '+'
+                elif(self.gameState[x][y] is 1 ):
+                    printMatrix[x+1][y+1] = 'H'
+                elif(self.gameState[x][y] is  -1):
+                    printMatrix[x+1][y+1] = 'C'
 
-
-                    #    if (placementLegal(col,row)):
-            #        stateCopy[col][row] = '+'
-            #    if (stateCopy[col][row] is not 0):
-            #        printMatrix[col+1][row+1] = stateCopy[col][row]
-
-
+        #Found on stackoverflow
         s = [[str(e) for e in row] for row in printMatrix]
         lens = [max(map(len, col)) for col in zip(*s)]
         fmt = '  '.join('{{:{}}}'.format(x) for x in lens)
@@ -171,12 +177,19 @@ class GameState:
 
     def checkWin(self):
         winner = set()
-        for col in range(self.width):
-            for row in range(self.width):
-                if(self.gameState[col][row] is not 0):
-                    winner.add(self.gameState[col][row])
+        for x in range(self.width):
+            for y in range(self.width):
+                if(self.gameState[x][y] is not 0):
+                    winner.add(self.gameState[x][y])
 
                 if(len(winner) > 1):
                     return False
 
         return True
+
+    def stateValue(self):
+        count = 0
+        for i in range(self.width):
+            count += sum(self.gameState[i])
+        return count
+
