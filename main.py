@@ -8,9 +8,12 @@ print ("")
 print('Welcome to Reversi Human!')
 print('It is you, against me.')
 print('For how long would you like me to think?')
-print('1: Not very long')
-print('2: Average long')
-print('3: Chuck norris long')
+print('1: Trivial')
+print('2: Brain starting')
+print('3: Average long')
+print('4: Really Long')
+print('5: Chuck norris long')
+
 depth = input('Well? ')
 depth = int(depth)*2
 
