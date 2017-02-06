@@ -9,7 +9,6 @@ class GameState:
         self.width = width
         self.gameState = [[0 for i in range(width)] for j in range(width)]
         self.playerOneTurn = True
-        self.printEnabled = True
         if(gameState is not None):
             self.gameState = gameState
         if(playerOneTurn is not None):
@@ -23,10 +22,6 @@ class GameState:
 
         newPlayerTurn = copy.deepcopy(self.playerOneTurn)
         return GameState(newState, newPlayerTurn);
-
-    def suppresPrint(self):
-        self.printEnabled = False
-
 
     def initialize(self):
         middleSmall = int((self.width/2)-1)
@@ -49,9 +44,9 @@ class GameState:
                 self.gameState[x][y] = -1
             self.switchCheckers(x, y)
             self.playerOneTurn =  not self.playerOneTurn
-        #else:
-            #if(self.printEnabled):
-            #print ('Could not place disk')
+            return True
+        else:
+            return False
 
     def placementLegal(self, x, y):
         if (self.shouldISwitch('N', x, y-1, False, True)):
