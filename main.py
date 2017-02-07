@@ -21,30 +21,28 @@ depth = int(depth)*2
 game = GameState()
 game.initialize()
 while (True):
-    if (len(game.validMoves()) == 0):
-        if (game.stateValue() > 0):
-            print ('Human Won!!')
-        elif(game.stateValue() < 0):
-            print ('Computer Won!!')
-        else:
-            print ('Its a draw!')
-        sys.exit()
-        
-    
     coordinates = [1]
     while(len(coordinates) != 2):
-        print ("")
+        if (len(game.validMoves()) == 0):
+            print ("")
+            if (game.stateValue() < 0):
+                print ('Human Won!!')
+            elif(game.stateValue() > 0):
+                print ('Computer Won!!')
+            else:
+                print ('Its a draw!')
+            sys.exit()
         if (game.getPlayerOneTurn()):
             game.printGameState()
-            coordinates = input('Where do you want to place your brick? (row, col): \n').split(' ')
+            coordinates = input('Where do you want to place your brick? (row col): \n').split(' ')
             while len(coordinates) is not 2:
                 print("Input two values")
-                coordinates = input('Where do you want to place your brick? (row, col): \n').split(' ')
+                coordinates = input('Where do you want to place your brick? (row col): \n').split(' ')
             x = int(coordinates[0]) - 1
             y = int(coordinates[1]) - 1
             while not game.placeDisk(Move(x, y)):
                 print("Invalid input, try again")
-                coordinates = input('Where do you want to place your brick? (row, col): \n').split(' ')
+                coordinates = input('Where do you want to place your brick? (row col): \n').split(' ')
                 x = int(coordinates[0]) - 1
                 y = int(coordinates[1]) - 1
         else:

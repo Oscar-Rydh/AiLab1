@@ -186,5 +186,5 @@ class GameState:
         count = 0
         for i in range(self.width):
             count += sum(self.gameState[i])
-        return count
+        return -count
 
