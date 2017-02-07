@@ -170,18 +170,6 @@ class GameState:
         print ('\n'.join(table))
 
 
-    def checkWin(self):
-        winner = set()
-        for x in range(self.width):
-            for y in range(self.width):
-                if(self.gameState[x][y] is not 0):
-                    winner.add(self.gameState[x][y])
-
-                if(len(winner) > 1):
-                    return False
-
-        return True
-
     def stateValue(self):
         count = 0
         for i in range(self.width):
